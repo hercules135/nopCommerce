@@ -8,13 +8,13 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Web.Framework.TagHelpers
 {
-    [HtmlTargetElement("div", Attributes = NopForAttributeName)]
-    public class NopLabelForTagHelper : TagHelper
+    [HtmlTargetElement("nop-label", Attributes = ForAttributeName)]
+    public class NopLabelTagHelper : TagHelper
     {
-        private const string NopForAttributeName = "nop-for";
-        private const string DisplayHintAttributeName = "nop-display-hint";
+        private const string ForAttributeName = "for";
+        private const string DisplayHintAttributeName = "display-hint";
 
-        [HtmlAttributeName(NopForAttributeName)]
+        [HtmlAttributeName(ForAttributeName)]
         public ModelExpression For { get; set; }
 
         [HtmlAttributeName(DisplayHintAttributeName)]
@@ -28,6 +28,7 @@ namespace Nop.Web.Framework.TagHelpers
 
             output.TagName = "div";
             output.Attributes.SetAttribute("class", classValue);
+            output.TagMode = TagMode.StartTagAndEndTag;
 
             if (For != null)
             {
