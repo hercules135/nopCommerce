@@ -1,14 +1,12 @@
 ﻿
 using System;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Localization;
-using Nop.Core.Domain.Messages;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Extensions;
@@ -19,7 +17,6 @@ using Nop.Services.Logging;
 using Nop.Services.Messages;
 using Nop.Services.Vendors;
 using Nop.Web.Factories;
-using Nop.Web.Framework;
 using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework.Security;
@@ -39,18 +36,14 @@ namespace Nop.Web.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
-        private readonly IQueuedEmailService _queuedEmailService;
-        private readonly IEmailAccountService _emailAccountService;
         private readonly IThemeContext _themeContext;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly IVendorService _vendorService;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly ILogger _logger;
-
-        private readonly TaxSettings _taxSettings;
+        
         private readonly StoreInformationSettings _storeInformationSettings;
-        private readonly EmailAccountSettings _emailAccountSettings;
         private readonly CommonSettings _commonSettings;
         private readonly LocalizationSettings _localizationSettings;
         private readonly CaptchaSettings _captchaSettings;
@@ -66,17 +59,13 @@ namespace Nop.Web.Controllers
             ILocalizationService localizationService,
             IWorkContext workContext,
             IStoreContext storeContext,
-            IQueuedEmailService queuedEmailService,
-            IEmailAccountService emailAccountService,
             IThemeContext themeContext,
             IGenericAttributeService genericAttributeService,
             ICustomerActivityService customerActivityService,
             IVendorService vendorService,
             IWorkflowMessageService workflowMessageService,
             ILogger logger,
-            TaxSettings taxSettings,
             StoreInformationSettings storeInformationSettings,
-            EmailAccountSettings emailAccountSettings,
             CommonSettings commonSettings,
             LocalizationSettings localizationSettings,
             CaptchaSettings captchaSettings,
@@ -88,18 +77,13 @@ namespace Nop.Web.Controllers
             this._localizationService = localizationService;
             this._workContext = workContext;
             this._storeContext = storeContext;
-            this._queuedEmailService = queuedEmailService;
-            this._emailAccountService = emailAccountService;
             this._themeContext = themeContext;
             this._genericAttributeService = genericAttributeService;
             this._customerActivityService = customerActivityService;
             this._vendorService = vendorService;
             this._workflowMessageService = workflowMessageService;
             this._logger = logger;
-
-            this._taxSettings = taxSettings;
             this._storeInformationSettings = storeInformationSettings;
-            this._emailAccountSettings = emailAccountSettings;
             this._commonSettings = commonSettings;
             this._localizationSettings = localizationSettings;
             this._captchaSettings = captchaSettings;

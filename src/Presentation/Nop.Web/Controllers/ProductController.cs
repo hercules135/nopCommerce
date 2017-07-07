@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
-using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Localization;
@@ -18,14 +17,12 @@ using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Services.Stores;
 using Nop.Web.Factories;
-using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework.Mvc.Rss;
 using Nop.Web.Framework.Security;
 using Nop.Web.Framework.Security.Captcha;
-using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Catalog;
 
 namespace Nop.Web.Controllers
@@ -43,7 +40,6 @@ namespace Nop.Web.Controllers
         private readonly IRecentlyViewedProductsService _recentlyViewedProductsService;
         private readonly ICompareProductsService _compareProductsService;
         private readonly IWorkflowMessageService _workflowMessageService;
-        private readonly IOrderReportService _orderReportService;
         private readonly IOrderService _orderService;
         private readonly IAclService _aclService;
         private readonly IStoreMappingService _storeMappingService;
@@ -54,7 +50,6 @@ namespace Nop.Web.Controllers
         private readonly ShoppingCartSettings _shoppingCartSettings;
         private readonly LocalizationSettings _localizationSettings;
         private readonly CaptchaSettings _captchaSettings;
-        private readonly IStaticCacheManager _cacheManager;
 
         #endregion
 
@@ -69,7 +64,6 @@ namespace Nop.Web.Controllers
             IRecentlyViewedProductsService recentlyViewedProductsService,
             ICompareProductsService compareProductsService,
             IWorkflowMessageService workflowMessageService,
-            IOrderReportService orderReportService,
             IOrderService orderService,
             IAclService aclService,
             IStoreMappingService storeMappingService,
@@ -79,8 +73,7 @@ namespace Nop.Web.Controllers
             CatalogSettings catalogSettings,
             ShoppingCartSettings shoppingCartSettings,
             LocalizationSettings localizationSettings,
-            CaptchaSettings captchaSettings,
-            IStaticCacheManager cacheManager)
+            CaptchaSettings captchaSettings)
         {
             this._productModelFactory = productModelFactory;
             this._productService = productService;
@@ -91,7 +84,6 @@ namespace Nop.Web.Controllers
             this._recentlyViewedProductsService = recentlyViewedProductsService;
             this._compareProductsService = compareProductsService;
             this._workflowMessageService = workflowMessageService;
-            this._orderReportService = orderReportService;
             this._orderService = orderService;
             this._aclService = aclService;
             this._storeMappingService = storeMappingService;
@@ -102,7 +94,6 @@ namespace Nop.Web.Controllers
             this._shoppingCartSettings = shoppingCartSettings;
             this._localizationSettings = localizationSettings;
             this._captchaSettings = captchaSettings;
-            this._cacheManager = cacheManager;
         }
 
         #endregion

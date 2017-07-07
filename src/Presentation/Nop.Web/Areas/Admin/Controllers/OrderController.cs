@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Primitives;
-using Nop.Admin.Extensions;
-using Nop.Admin.Helpers;
-using Nop.Admin.Models.Orders;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Helpers;
+using Nop.Web.Areas.Admin.Models.Orders;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -48,7 +48,7 @@ using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class OrderController : BaseAdminController
     {
@@ -1892,11 +1892,7 @@ namespace Nop.Admin.Controllers
 
             var model = new OrderModel();
             PrepareOrderDetailsModel(model, order);
-
-            var warnings = TempData["nop.admin.order.warnings"] as List<string>;
-            if (warnings != null)
-                model.Warnings = warnings;
-
+            
             return View(model);
         }
 
@@ -2317,7 +2313,8 @@ namespace Nop.Admin.Controllers
 
             var model = new OrderModel();
             PrepareOrderDetailsModel(model, order);
-            model.Warnings = updateOrderParameters.Warnings;
+            foreach (var warning in updateOrderParameters.Warnings)
+                WarningNotification(warning, false);
 
             //selected tab
             SaveSelectedTabName(persistForTheNextRequest: false);
@@ -2398,7 +2395,8 @@ namespace Nop.Admin.Controllers
 
                 var model = new OrderModel();
                 PrepareOrderDetailsModel(model, order);
-                model.Warnings = updateOrderParameters.Warnings;
+                foreach (var warning in updateOrderParameters.Warnings)
+                    WarningNotification(warning, false);
 
                 //selected tab
                 SaveSelectedTabName(persistForTheNextRequest: false);
@@ -2837,7 +2835,9 @@ namespace Nop.Admin.Controllers
                 }
 
                 //redirect to order details page
-                TempData["nop.admin.order.warnings"] = updateOrderParameters.Warnings;
+                foreach (var warning in updateOrderParameters.Warnings)
+                    WarningNotification(warning);
+
                 return RedirectToAction("Edit", "Order", new { id = order.Id });
             }
             

@@ -3,21 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.Extensions.Primitives;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
-using Nop.Core.Infrastructure;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
@@ -32,7 +26,6 @@ using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
-using Nop.Web.Components;
 using Nop.Web.Factories;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc;
@@ -42,15 +35,6 @@ using Nop.Web.Framework.Security.Captcha;
 using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Media;
 using Nop.Web.Models.ShoppingCart;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
-using Nop.Web.Framework.Extensions;
-using Nop.Web.Framework.Mvc.Razor;
 
 namespace Nop.Web.Controllers
 {
@@ -729,7 +713,7 @@ namespace Nop.Web.Controllers
                 });
             }
             
-#region Update existing shopping cart item?
+            #region Update existing shopping cart item?
 
             int updatecartitemid = 0;
             foreach (string formKey in form.Keys)
@@ -766,10 +750,10 @@ namespace Nop.Web.Controllers
                     });
                 }
             }
-
-#endregion
-
-#region Customer entered price
+            
+            #endregion
+            
+            #region Customer entered price
             decimal customerEnteredPriceConverted = decimal.Zero;
             if (product.CustomerEntersPrice)
             {
@@ -784,9 +768,9 @@ namespace Nop.Web.Controllers
                     }
                 }
             }
-#endregion
+            #endregion
 
-#region Quantity
+            #region Quantity
 
             int quantity = 1;
             foreach (string formKey in form.Keys)
@@ -795,8 +779,8 @@ namespace Nop.Web.Controllers
                     int.TryParse(form[formKey], out quantity);
                     break;
                 }
-
-#endregion
+            
+            #endregion
 
             var addToCartWarnings = new List<string>();
 

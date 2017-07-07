@@ -1056,14 +1056,12 @@ namespace Nop.Plugin.Payments.PayPalDirect
         }
 
         /// <summary>
-        /// Gets a route for payment info
+        /// Gets a view component for displaying plugin in public store ("payment info" checkout step)
         /// </summary>
         /// <param name="viewComponentName">View component name</param>
-        /// <param name="viewComponentArguments">View component arguments</param>
-        public void GetPaymentInfoRoute(out string viewComponentName, out object viewComponentArguments)
+        public void GetPublicViewComponent(out string viewComponentName)
         {
             viewComponentName = "PaymentPayPalDirect";
-            viewComponentArguments = null;
         }
 
         /// <summary>

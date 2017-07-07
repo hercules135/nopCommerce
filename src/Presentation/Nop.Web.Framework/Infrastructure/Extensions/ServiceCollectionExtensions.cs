@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Nop.Core.Data;
 using Nop.Core.Infrastructure;
+using Nop.Services.Authentication;
+using Nop.Services.Logging;
 using Nop.Services.Tasks;
 using Nop.Web.Framework.FluentValidation;
 using Nop.Web.Framework.Mvc.Filters;
@@ -39,18 +41,9 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
                 //database is already installed, so start scheduled tasks
                 TaskManager.Instance.Initialize();
                 TaskManager.Instance.Start();
-#if NET451
-                try
-                {
-                    //TODO why try-catch? test and remove
-                    //and log application start
-                    EngineContext.Current.Resolve<ILogger>().Information("Application started", null, null);
-                }
-                catch (Exception exc)
-                {
-                    
-                }
-#endif
+
+                //log application start
+                EngineContext.Current.Resolve<ILogger>().Information("Application started", null, null);
             }
 
             return serviceProvider;
@@ -93,6 +86,19 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
         }
 
         /// <summary>
+        /// Adds services required for anti-forgery support
+        /// </summary>
+        /// <param name="services">Collection of service descriptors</param>
+        public static void AddAntiForgery(this IServiceCollection services)
+        {
+            //override cookie name
+            services.AddAntiforgery(options =>
+            {
+                options.CookieName = ".Nop.Antiforgery";
+            });
+        }
+
+        /// <summary>
         /// Adds services required for application session state
         /// </summary>
         /// <param name="services">Collection of service descriptors</param>
@@ -118,6 +124,19 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
             services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.ViewLocationExpanders.Add(new ThemeableViewLocationExpander());
+            });
+        }
+
+        /// <summary>
+        /// Adds authentication service
+        /// </summary>
+        /// <param name="services">Collection of service descriptors</param>
+        public static void AddNopAuthentication(this IServiceCollection services)
+        {
+            //set the authentication scheme corresponding to the default middleware
+            services.AddAuthentication(options =>
+            {
+                options.SignInScheme = NopCookieAuthenticationDefaults.ExternalAuthenticationScheme;
             });
         }
 

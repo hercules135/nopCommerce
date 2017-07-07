@@ -1,24 +1,22 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Web;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using Nop.Admin.Models.Common;
+using Nop.Web.Areas.Admin.Models.Common;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Plugins;
 using Nop.Services.Common;
-using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Helpers;
@@ -33,7 +31,7 @@ using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Security;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class CommonController : BaseAdminController
     {
@@ -56,11 +54,10 @@ namespace Nop.Admin.Controllers
         private readonly IPermissionService _permissionService;
         private readonly ILocalizationService _localizationService;
         private readonly ISearchTermService _searchTermService;
-        private readonly ISettingService _settingService;
         private readonly IStoreService _storeService;
         private readonly CatalogSettings _catalogSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMaintenanceService _maintenanceService;
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IStaticCacheManager _cacheManager;
 
         #endregion
@@ -84,11 +81,10 @@ namespace Nop.Admin.Controllers
             IPermissionService permissionService,
             ILocalizationService localizationService,
             ISearchTermService searchTermService,
-            ISettingService settingService,
             IStoreService storeService,
             CatalogSettings catalogSettings,
-            IHttpContextAccessor httpContextAccessor,
-            IMaintenanceService maintenanceService, 
+            IMaintenanceService maintenanceService,
+            IHostingEnvironment hostingEnvironment,
             IStaticCacheManager cacheManager)
         {
             this._paymentService = paymentService;
@@ -108,11 +104,10 @@ namespace Nop.Admin.Controllers
             this._permissionService = permissionService;
             this._localizationService = localizationService;
             this._searchTermService = searchTermService;
-            this._settingService = settingService;
             this._storeService = storeService;
             this._catalogSettings = catalogSettings;
-            this._httpContextAccessor = httpContextAccessor;
             this._maintenanceService = maintenanceService;
+            this._hostingEnvironment = hostingEnvironment;
             this._cacheManager = cacheManager;
         }
 
@@ -546,7 +541,7 @@ namespace Nop.Admin.Controllers
 
 
             model.DeleteExportedFiles.NumberOfDeletedFiles = 0;
-            string path = CommonHelper.MapPath("~/wwwroot/files/exportimport");
+            string path = Path.Combine(_hostingEnvironment.WebRootPath, "files\\exportimport");
             foreach (var fullPath in Directory.GetFiles(path))
             {
                 try

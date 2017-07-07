@@ -1,3 +1,4 @@
+using System;
 using Autofac;
 using Autofac.Core;
 using Nop.Core.Configuration;

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using Nop.Admin.Models.Cms;
+using Microsoft.AspNetCore.Mvc;
+using Nop.Web.Areas.Admin.Models.Cms;
 using Nop.Services.Cms;
 
-namespace Nop.Admin.Components
+namespace Nop.Web.Areas.Admin.Components
 {
     public class AdminWidgetViewComponent : ViewComponent
     {
@@ -23,7 +23,7 @@ namespace Nop.Admin.Components
             var widgets = _widgetService.LoadActiveWidgetsByWidgetZone(widgetZone);
             foreach (var widget in widgets)
             {
-                widget.GetDisplayWidgetRoute(out string viewComponentName);
+                widget.GetPublicViewComponent(out string viewComponentName);
 
                 var widgetModel = new RenderWidgetModel
                 {

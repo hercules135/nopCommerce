@@ -4,8 +4,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Admin.Extensions;
-using Nop.Admin.Models.Plugins;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Models.Plugins;
 using Nop.Core;
 using Nop.Core.Domain.Cms;
 using Nop.Core.Domain.Customers;
@@ -16,7 +16,6 @@ using Nop.Core.Plugins;
 using Nop.Services;
 using Nop.Services.Authentication.External;
 using Nop.Services.Cms;
-using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
@@ -30,7 +29,7 @@ using Nop.Services.Tax;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Kendoui;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class PluginController : BaseAdminController
 	{
@@ -142,50 +141,10 @@ namespace Nop.Admin.Controllers
             //configuration URLs
             if (pluginDescriptor.Installed)
             {
-                //specify configuration URL only when a plugin is already installed
-
-                //plugins do not provide a general URL for configuration
-                //because some of them have some custom URLs for configuration
-                //for example, discount requirement plugins require additional parameters and attached to a certain discount
+                //display configuration URL only when a plugin is already installed
                 var pluginInstance = pluginDescriptor.Instance();
-                string configurationUrl = null;
-                if (pluginInstance is IPaymentMethod)
-                {
-                    //payment plugin
-                    configurationUrl = Url.Action("ConfigureMethod", "Payment", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is IShippingRateComputationMethod)
-                {
-                    //shipping rate computation method
-                    configurationUrl = Url.Action("ConfigureProvider", "Shipping", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is IPickupPointProvider)
-                {
-                    //pickup point provider
-                    configurationUrl = Url.Action("ConfigurePickupPointProvider", "Shipping", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is ITaxProvider)
-                {
-                    //tax provider
-                    configurationUrl = Url.Action("ConfigureProvider", "Tax", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is IExternalAuthenticationMethod)
-                {
-                    //external auth method
-                    configurationUrl = Url.Action("ConfigureMethod", "ExternalAuthentication", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is IWidgetPlugin)
-                {
-                    //widgets
-                    configurationUrl = Url.Action("ConfigureWidget", "Widget", new { systemName = pluginDescriptor.SystemName });
-                }
-                else if (pluginInstance is IMiscPlugin)
-                {
-                    //Misc plugins
-                    configurationUrl = Url.Action("ConfigureMiscPlugin", "Plugin", new { systemName = pluginDescriptor.SystemName });
-                }
-                pluginModel.ConfigurationUrl = configurationUrl;
-                
+                pluginModel.ConfigurationUrl = pluginInstance.GetConfigurationPageUrl();
+
 
                 //enabled/disabled (only for some plugin types)
                 if (pluginInstance is IPaymentMethod)
@@ -391,24 +350,7 @@ namespace Nop.Admin.Controllers
             _webHelper.RestartAppDomain();
             return RedirectToAction("List");
         }
-
-        public virtual IActionResult ConfigureMiscPlugin(string systemName)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePlugins))
-                return AccessDeniedView();
-
-
-            var descriptor = _pluginFinder.GetPluginDescriptorBySystemName<IMiscPlugin>(systemName);
-            if (descriptor == null || !descriptor.Installed)
-                return Redirect("List");
-
-            var plugin  = descriptor.Instance<IMiscPlugin>();
-
-            var url = plugin.GetConfigurationPageUrl();
-            //TODO implement logic when configuration page is not required
-            return Redirect(url);
-        }
-
+        
         //edit
         public virtual IActionResult EditPopup(string systemName)
         {

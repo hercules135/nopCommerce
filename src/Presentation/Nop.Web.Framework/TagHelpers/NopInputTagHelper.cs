@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Nop.Web.Framework.TagHelpers
 {
-    [HtmlTargetElement("nop-input")]
+    [HtmlTargetElement("input", Attributes = ForAttributeName)]
     public class NopInputTagHelper : InputTagHelper
     {
-        private const string RequiredAttributeName = "required";
+        private const string ForAttributeName = "asp-for";
 
-        [HtmlAttributeName(RequiredAttributeName)]
-        public string Required { get; set; } = "";
+        [HtmlAttributeName("asp-disabled")]
+        public string IsDisabled { set; get; }
 
         public NopInputTagHelper(IHtmlGenerator generator) : base(generator)
         {
@@ -18,18 +18,11 @@ namespace Nop.Web.Framework.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var classValue = output.Attributes.ContainsName("class")
-                                ? $"{output.Attributes["class"].Value} form-control"
-                                : "form-control";
-            output.Attributes.SetAttribute("class", classValue);
-            output.TagName = "input";
-            output.TagMode = TagMode.SelfClosing;
-
-            bool.TryParse(Required, out bool required);
-            if (required)
+            bool.TryParse(IsDisabled, out bool disabled);
+            if (disabled)
             {
-                output.PreElement.SetHtmlContent("<div class='input-group input-group-required'>");
-                output.PostElement.SetHtmlContent("<div class=\"input-group-btn\"><span class=\"required\">*</span></div></div>");
+                var d = new TagHelperAttribute("disabled", "disabled");
+                output.Attributes.Add(d);
             }
 
             base.Process(context, output);

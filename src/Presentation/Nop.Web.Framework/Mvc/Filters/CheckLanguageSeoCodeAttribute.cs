@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Nop.Core;
@@ -67,17 +65,13 @@ namespace Nop.Web.Framework.Mvc.Filters
 
                 if (!DataSettingsHelper.DatabaseIsInstalled())
                     return;
-
+                
                 //only in GET requests
-                if (!context.HttpContext.Request.Method.Equals(WebRequestMethods.Http.Get, StringComparison.InvariantCultureIgnoreCase))
+                if (context.HttpContext.Request.Method != WebRequestMethods.Http.Get)
                     return;
 
                 //whether SEO friendly URLs are enabled
                 if (!_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
-                    return;
-
-                //ensure that there is route and it is registered and localizable
-                if (context.RouteData == null || context.RouteData.Routers == null || !context.RouteData.Routers.OfType<LocalizedRoute>().Any())
                     return;
 
                 //check whether current page URL is already localized URL

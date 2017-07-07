@@ -174,11 +174,6 @@ namespace Nop.Web.Controllers
         {
             if (DataSettingsHelper.DatabaseIsInstalled())
                 return RedirectToRoute("HomePage");
-            
-            #if NET451
-            //set page timeout to 5 minutes
-            this.Server.ScriptTimeout = 300;
-            #endif
 
             var model = new InstallModel
             {
@@ -213,11 +208,6 @@ namespace Nop.Web.Controllers
         {
             if (DataSettingsHelper.DatabaseIsInstalled())
                 return RedirectToRoute("HomePage");
-            
-            #if NET451
-            //set page timeout to 5 minutes
-            this.Server.ScriptTimeout = 300;
-            #endif
 
             if (model.DatabaseConnectionString != null)
                 model.DatabaseConnectionString = model.DatabaseConnectionString.Trim();
@@ -397,9 +387,8 @@ namespace Nop.Web.Controllers
                     {
                         if (pluginsIgnoredDuringInstallation.Contains(plugin.PluginDescriptor.SystemName))
                             continue;
-#if NET451
+
                         plugin.Install();
-#endif
                     }
 
                     //register default permissions
@@ -423,10 +412,8 @@ namespace Nop.Web.Controllers
                     //reset cache
                     DataSettingsHelper.ResetCache();
                     
-#if NET451
-                    var cacheManager = EngineContext.Current.ContainerManager.Resolve<IStaticCacheManager>();
+                    var cacheManager = EngineContext.Current.Resolve<IStaticCacheManager>();
                     cacheManager.Clear();
-#endif
 
                     //clear provider settings if something got wrong
                     settingsManager.SaveSettings(new DataSettings

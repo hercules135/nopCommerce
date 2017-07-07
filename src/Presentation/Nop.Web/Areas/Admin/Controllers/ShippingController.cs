@@ -4,11 +4,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
-using Nop.Admin.Extensions;
-using Nop.Admin.Models.Directory;
-using Nop.Admin.Models.Shipping;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Models.Directory;
+using Nop.Web.Areas.Admin.Models.Shipping;
 using Nop.Core;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Shipping;
@@ -25,7 +24,7 @@ using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class ShippingController : BaseAdminController
 	{
@@ -135,6 +134,7 @@ namespace Nop.Admin.Controllers
                 var tmp1 = shippingProvider.ToModel();
                 tmp1.IsActive = shippingProvider.IsShippingRateComputationMethodActive(_shippingSettings);
                 tmp1.LogoUrl = shippingProvider.PluginDescriptor.GetLogoUrl(_webHelper);
+                tmp1.ConfigurationUrl = shippingProvider.GetConfigurationPageUrl();
                 shippingProvidersModel.Add(tmp1);
             }
             shippingProvidersModel = shippingProvidersModel.ToList();
@@ -182,26 +182,9 @@ namespace Nop.Admin.Controllers
             return new NullJsonResult();
         }
 
-
-        public virtual IActionResult ConfigureProvider(string systemName)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageShippingSettings))
-                return AccessDeniedView();
-
-            var srcm = _shippingService.LoadShippingRateComputationMethodBySystemName(systemName);
-            if (srcm == null)
-                //No shipping rate computation method found with the specified id
-                return RedirectToAction("Providers");
-
-            var url = srcm.GetConfigurationPageUrl();
-            //TODO implement logic when configuration page is not required
-            return Redirect(url);
-        }
-
-
-#endregion
-
-#region Pickup point providers
+        #endregion
+        
+        #region Pickup point providers
 
         public virtual IActionResult PickupPointProviders()
         {
@@ -224,6 +207,7 @@ namespace Nop.Admin.Controllers
                 var model = provider.ToModel();
                 model.IsActive = provider.IsPickupPointProviderActive(_shippingSettings);
                 model.LogoUrl = provider.PluginDescriptor.GetLogoUrl(_webHelper);
+                model.ConfigurationUrl = provider.GetConfigurationPageUrl();
                 pickupPointProviderModel.Add(model);
             }
 
@@ -270,25 +254,9 @@ namespace Nop.Admin.Controllers
             return new NullJsonResult();
         }
 
-
-        public virtual IActionResult ConfigurePickupPointProvider(string systemName)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageShippingSettings))
-                return AccessDeniedView();
-
-            var pickupPointProvider = _shippingService.LoadPickupPointProviderBySystemName(systemName);
-            if (pickupPointProvider == null)
-                //No shipping rate computation method found with the specified id
-                return RedirectToAction("PickupPointProviders");
-
-            var url = pickupPointProvider.GetConfigurationPageUrl();
-            //TODO implement logic when configuration page is not required
-            return Redirect(url);
-        }
-
-#endregion
-
-#region Shipping methods
+        #endregion
+        
+        #region Shipping methods
 
         public virtual IActionResult Methods()
         {
@@ -412,10 +380,10 @@ namespace Nop.Admin.Controllers
             SuccessNotification(_localizationService.GetResource("Admin.Configuration.Shipping.Methods.Deleted"));
             return RedirectToAction("Methods");
         }
-
-#endregion
-
-#region Dates and ranges
+        
+        #endregion
+        
+        #region Dates and ranges
 
         public virtual IActionResult DatesAndRanges()
         {
@@ -425,7 +393,9 @@ namespace Nop.Admin.Controllers
             return View();
         }
 
-#region Delivery dates
+	    #endregion
+
+        #region Delivery dates
 
         [HttpPost]
         public virtual IActionResult DeliveryDates(DataSourceRequest command)
@@ -548,8 +518,8 @@ namespace Nop.Admin.Controllers
         }
 
 #endregion
-
-#region Product availability ranges
+        
+        #region Product availability ranges
 
         [HttpPost]
         public virtual IActionResult ProductAvailabilityRanges(DataSourceRequest command)
@@ -671,10 +641,8 @@ namespace Nop.Admin.Controllers
         }
 
 #endregion
-
-#endregion
-
-#region Warehouses
+        
+        #region Warehouses
 
         public virtual IActionResult Warehouses()
         {
@@ -904,7 +872,7 @@ namespace Nop.Admin.Controllers
 
 #endregion
         
-#region Restrictions
+        #region Restrictions
 
         public virtual IActionResult Restrictions()
         {
@@ -988,7 +956,7 @@ namespace Nop.Admin.Controllers
             SuccessNotification(_localizationService.GetResource("Admin.Configuration.Shipping.Restrictions.Updated"));
             return RedirectToAction("Restrictions");
         }
-
-#endregion
+        
+        #endregion
     }
 }

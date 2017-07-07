@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
@@ -337,8 +336,8 @@ namespace Nop.Web.Factories
         }
 
 #endregion
-
-#region Categories
+        
+        #region Categories
 
         /// <summary>
         /// Prepare category model
@@ -602,7 +601,7 @@ namespace Nop.Web.Factories
             var cachedTopicModel = _cacheManager.Get(topicCacheKey, () =>
                 _topicService.GetAllTopics(_storeContext.CurrentStore.Id)
                 .Where(t => t.IncludeInTopMenu)
-                .Select(t => new TopMenuModel.TopMenuTopicModel
+                .Select(t => new TopMenuModel.TopicModel
                 {
                     Id = t.Id,
                     Name = t.GetLocalized(x => x.Title),
@@ -760,10 +759,10 @@ namespace Nop.Web.Factories
 
             return result;
         }
-
-#endregion
-
-#region Manufacturers
+        
+        #endregion
+        
+        #region Manufacturers
 
         /// <summary>
         /// Prepare manufacturer model
@@ -977,10 +976,10 @@ namespace Nop.Web.Factories
             
             return cachedModel;
         }
-
-#endregion
-
-#region Vendors
+        
+        #endregion
+        
+        #region Vendors
 
         /// <summary>
         /// Prepare vendor model
@@ -1105,10 +1104,10 @@ namespace Nop.Web.Factories
             
             return cachedModel;
         }
-
-#endregion
-
-#region Product tags
+        
+        #endregion
+        
+        #region Product tags
 
         /// <summary>
         /// Prepare popular product tags model
@@ -1223,10 +1222,10 @@ namespace Nop.Web.Factories
                 .ToList();
             return model;
         }
-
-#endregion
-
-#region Searching
+        
+        #endregion
+        
+        #region Searching
 
         /// <summary>
         /// Prepare search model
@@ -1471,7 +1470,7 @@ namespace Nop.Web.Factories
             };
             return model;
         }
-
-#endregion
+        
+        #endregion
     }
 }

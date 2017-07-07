@@ -96,11 +96,10 @@ namespace Nop.Services.Payments
         ProcessPaymentRequest GetPaymentInfo(IFormCollection form);
 
         /// <summary>
-        /// Gets a route for payment info
+        /// Gets a view component for displaying plugin in public store ("payment info" checkout step)
         /// </summary>
         /// <param name="viewComponentName">View component name</param>
-        /// <param name="viewComponentArguments">View component arguments</param>
-        void GetPaymentInfoRoute(out string viewComponentName, out object viewComponentArguments);
+        void GetPublicViewComponent(out string viewComponentName);
 
         #endregion
 

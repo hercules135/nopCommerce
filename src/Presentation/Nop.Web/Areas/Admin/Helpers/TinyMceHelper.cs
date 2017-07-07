@@ -1,8 +1,9 @@
 ﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Nop.Core;
 using Nop.Core.Infrastructure;
 
-namespace Nop.Admin.Helpers
+namespace Nop.Web.Areas.Admin.Helpers
 {
     /// <summary>
     /// TinyMCE helper
@@ -20,11 +21,12 @@ namespace Nop.Admin.Helpers
             //Additional languages can be downloaded from the website TinyMCE(https://www.tinymce.com/download/language-packages/)
 
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
+            var hostingEnvironment = EngineContext.Current.Resolve<IHostingEnvironment>();
 
             var languageCulture = workContext.WorkingLanguage.LanguageCulture;
 
             var langFile = string.Format("{0}.js", languageCulture);
-            var path = CommonHelper.MapPath("~/wwwroot/lib/tinymce/langs/");
+            var path = Path.Combine(hostingEnvironment.WebRootPath, "lib\\tinymce\\langs");
             var fileExists = File.Exists(string.Format("{0}{1}", path, langFile));
 
             if (!fileExists)

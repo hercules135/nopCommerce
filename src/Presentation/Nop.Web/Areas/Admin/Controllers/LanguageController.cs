@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Admin.Extensions;
-using Nop.Admin.Models.Localization;
-using Nop.Core;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Models.Localization;
 using Nop.Core.Domain.Localization;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
@@ -20,7 +20,7 @@ using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework.Security;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class LanguageController : BaseAdminController
     {
@@ -33,6 +33,7 @@ namespace Nop.Admin.Controllers
         private readonly IStoreMappingService _storeMappingService;
         private readonly IPermissionService _permissionService;
         private readonly ICustomerActivityService _customerActivityService;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         #endregion
 
@@ -44,7 +45,8 @@ namespace Nop.Admin.Controllers
             IStoreService storeService,
             IStoreMappingService storeMappingService,
             IPermissionService permissionService,
-            ICustomerActivityService customerActivityService)
+            ICustomerActivityService customerActivityService,
+            IHostingEnvironment hostingEnvironment)
         {
             this._localizationService = localizationService;
             this._languageService = languageService;
@@ -53,6 +55,7 @@ namespace Nop.Admin.Controllers
             this._storeMappingService = storeMappingService;
             this._permissionService = permissionService;
             this._customerActivityService = customerActivityService;
+            this._hostingEnvironment = hostingEnvironment;
         }
 
         #endregion
@@ -322,7 +325,7 @@ namespace Nop.Admin.Controllers
                 return Json("Access denied");
 
             var flagNames = Directory
-                .EnumerateFiles(CommonHelper.MapPath("~/wwwroot/images/flags/"), "*.png", SearchOption.TopDirectoryOnly)
+                .EnumerateFiles(Path.Combine(_hostingEnvironment.WebRootPath, "images\\flags"), "*.png", SearchOption.TopDirectoryOnly)
                 .Select(Path.GetFileName)
                 .ToList();
 
@@ -492,11 +495,6 @@ namespace Nop.Admin.Controllers
             if (language == null)
                 //No language found with the specified id
                 return RedirectToAction("List");
-
-            #if NET451
-            //set page timeout to 5 minutes
-            this.Server.ScriptTimeout = 300;
-            #endif
 
             try
             {

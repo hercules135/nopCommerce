@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Routing;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -861,9 +860,8 @@ namespace Nop.Web.Factories
                 if (cart.IsRecurring() && pm.RecurringPaymentType == RecurringPaymentType.NotSupported)
                     continue;
 
-                pm.GetPaymentInfoRoute(out string viewComponentName, out object viewComponentArguments);
+                pm.GetPublicViewComponent(out string viewComponentName);
                 model.ButtonPaymentMethodViewComponentNames.Add(viewComponentName);
-                model.ButtonPaymentMethodViewComponentArguments.Add(viewComponentArguments);
             }
             //hide "Checkout" button if we have only "Button" payment methods
             model.HideCheckoutButton = !nonButtonPaymentMethods.Any() && model.ButtonPaymentMethodViewComponentNames.Any();

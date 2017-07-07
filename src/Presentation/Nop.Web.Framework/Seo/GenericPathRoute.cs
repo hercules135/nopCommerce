@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Nop.Core;
@@ -48,7 +47,7 @@ namespace Nop.Web.Framework.Seo
         {
             //remove language code from the path if it's localized URL
             var path = context.HttpContext.Request.Path.Value;
-            if (path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false, out Language language))
+            if (this.SeoFriendlyUrlsForLanguagesEnabled && path.IsLocalizedUrl(context.HttpContext.Request.PathBase, false, out Language language))
                 path = path.RemoveLanguageSeoCodeFromUrl(context.HttpContext.Request.PathBase, false);
 
             //parse route data
@@ -103,7 +102,7 @@ namespace Nop.Web.Framework.Seo
                 var redirectionRouteData = new RouteData(context.RouteData);
                 redirectionRouteData.Values["controller"] = "Common";
                 redirectionRouteData.Values["action"] = "InternalRedirect";
-                redirectionRouteData.Values["url"] = $"/{activeSlug}"; //TODO support virtual directories
+                redirectionRouteData.Values["url"] = $"/{activeSlug}";
                 redirectionRouteData.Values["permanentRedirect"] = true;
                 context.HttpContext.Items["nop.RedirectFromGenericPathRoute"] = true;
                 context.RouteData = redirectionRouteData;
@@ -122,7 +121,7 @@ namespace Nop.Web.Framework.Seo
                 var redirectionRouteData = new RouteData(context.RouteData);
                 redirectionRouteData.Values["controller"] = "Common";
                 redirectionRouteData.Values["action"] = "InternalRedirect";
-                redirectionRouteData.Values["url"] = $"/{slugForCurrentLanguage}"; //TODO support virtual directories
+                redirectionRouteData.Values["url"] = $"/{slugForCurrentLanguage}";
                 redirectionRouteData.Values["permanentRedirect"] = false;
                 context.HttpContext.Items["nop.RedirectFromGenericPathRoute"] = true;
                 context.RouteData = redirectionRouteData;

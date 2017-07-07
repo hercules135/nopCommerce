@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Primitives;
-using Nop.Admin.Extensions;
-using Nop.Admin.Helpers;
-using Nop.Admin.Models.Common;
-using Nop.Admin.Models.Customers;
-using Nop.Admin.Models.ShoppingCart;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Helpers;
+using Nop.Web.Areas.Admin.Models.Common;
+using Nop.Web.Areas.Admin.Models.Customers;
+using Nop.Web.Areas.Admin.Models.ShoppingCart;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
@@ -50,7 +50,7 @@ using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class CustomerController : BaseAdminController
     {
@@ -87,7 +87,7 @@ namespace Nop.Admin.Controllers
         private readonly IEmailAccountService _emailAccountService;
         private readonly ForumSettings _forumSettings;
         private readonly IForumService _forumService;
-        private readonly IOpenAuthenticationService _openAuthenticationService;
+        private readonly IExternalAuthenticationService _externalAuthenticationService;
         private readonly AddressSettings _addressSettings;
         private readonly IStoreService _storeService;
         private readonly ICustomerAttributeParser _customerAttributeParser;
@@ -134,8 +134,8 @@ namespace Nop.Admin.Controllers
             EmailAccountSettings emailAccountSettings,
             IEmailAccountService emailAccountService, 
             ForumSettings forumSettings,
-            IForumService forumService, 
-            IOpenAuthenticationService openAuthenticationService,
+            IForumService forumService,
+            IExternalAuthenticationService externalAuthenticationService,
             AddressSettings addressSettings,
             IStoreService storeService,
             ICustomerAttributeParser customerAttributeParser,
@@ -179,7 +179,7 @@ namespace Nop.Admin.Controllers
             this._emailAccountService = emailAccountService;
             this._forumSettings = forumSettings;
             this._forumService = forumService;
-            this._openAuthenticationService = openAuthenticationService;
+            this._externalAuthenticationService = externalAuthenticationService;
             this._addressSettings = addressSettings;
             this._storeService = storeService;
             this._customerAttributeParser = customerAttributeParser;
@@ -246,9 +246,9 @@ namespace Nop.Admin.Controllers
                 throw new ArgumentNullException("customer");
 
             var result = new List<CustomerModel.AssociatedExternalAuthModel>();
-            foreach (var record in _openAuthenticationService.GetExternalIdentifiersFor(customer))
+            foreach (var record in customer.ExternalAuthenticationRecords)
             {
-                var method = _openAuthenticationService.LoadExternalAuthenticationMethodBySystemName(record.ProviderSystemName);
+                var method = _externalAuthenticationService.LoadExternalAuthenticationMethodBySystemName(record.ProviderSystemName);
                 if (method == null)
                     continue;
 
@@ -256,7 +256,7 @@ namespace Nop.Admin.Controllers
                 {
                     Id = record.Id,
                     Email = record.Email,
-                    ExternalIdentifier = record.ExternalIdentifier,
+                    ExternalIdentifier = record.ExternalDisplayIdentifier,
                     AuthMethodName = method.PluginDescriptor.FriendlyName
                 });
             }

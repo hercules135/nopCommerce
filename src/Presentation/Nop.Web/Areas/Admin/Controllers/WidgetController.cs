@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Nop.Admin.Extensions;
-using Nop.Admin.Models.Cms;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Models.Cms;
 using Nop.Core.Domain.Cms;
 using Nop.Core.Plugins;
 using Nop.Services.Cms;
@@ -12,7 +11,7 @@ using Nop.Services.Security;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class WidgetController : BaseAdminController
 	{
@@ -70,6 +69,7 @@ namespace Nop.Admin.Controllers
             {
                 var tmp1 = widget.ToModel();
                 tmp1.IsActive = widget.IsWidgetActive(_widgetSettings);
+                tmp1.ConfigurationUrl = widget.GetConfigurationPageUrl();
                 widgetsModel.Add(tmp1);
             }
             widgetsModel = widgetsModel.ToList();
@@ -119,22 +119,7 @@ namespace Nop.Admin.Controllers
 
             return new NullJsonResult();
         }
-
-        public virtual IActionResult ConfigureWidget(string systemName)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageWidgets))
-                return AccessDeniedView();
-
-            var widget = _widgetService.LoadWidgetBySystemName(systemName);
-            if (widget == null)
-                //No widget found with the specified id
-                return RedirectToAction("List");
-
-            var url = widget.GetConfigurationPageUrl();
-            //TODO implement logic when configuration page is not required
-            return Redirect(url);
-        }
-
+        
 	    #endregion
     }
 }

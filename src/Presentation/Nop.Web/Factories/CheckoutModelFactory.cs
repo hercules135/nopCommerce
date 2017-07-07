@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -431,12 +430,11 @@ namespace Nop.Web.Factories
         /// <returns>Payment info model</returns>
         public virtual CheckoutPaymentInfoModel PreparePaymentInfoModel(IPaymentMethod paymentMethod)
         {
-            paymentMethod.GetPaymentInfoRoute(out string viewComponentName, out object viewComponentArguments);
+            paymentMethod.GetPublicViewComponent(out string viewComponentName);
 
             var model = new CheckoutPaymentInfoModel
             {
                 PaymentViewComponentName = viewComponentName,
-                PaymentViewComponentArguments = viewComponentArguments,
                 DisplayOrderTotals = _orderSettings.OnePageCheckoutDisplayOrderTotalsOnPaymentInfoTab
             };
             

@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Nop.Admin.Models.Settings;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Nop.Web.Areas.Admin.Models.Settings;
 using Nop.Core;
 using Nop.Services.Common;
 
-namespace Nop.Admin.Components
+namespace Nop.Web.Areas.Admin.Components
 {
     public class SettingModeViewComponent : ViewComponent
     {

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Internal;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -48,11 +46,9 @@ namespace Nop.Web.Controllers
         private readonly IShippingService _shippingService;
         private readonly IPaymentService _paymentService;
         private readonly IPluginFinder _pluginFinder;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ILogger _logger;
         private readonly IOrderService _orderService;
         private readonly IWebHelper _webHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor; 
         private readonly IAddressAttributeParser _addressAttributeParser;
         private readonly IAddressAttributeService _addressAttributeService;
 
@@ -80,11 +76,9 @@ namespace Nop.Web.Controllers
             IShippingService shippingService, 
             IPaymentService paymentService,
             IPluginFinder pluginFinder,
-            IOrderTotalCalculationService orderTotalCalculationService,
             ILogger logger,
             IOrderService orderService,
             IWebHelper webHelper,
-            IHttpContextAccessor httpContextAccessor,
             IAddressAttributeParser addressAttributeParser,
             IAddressAttributeService addressAttributeService,
             OrderSettings orderSettings, 
@@ -107,11 +101,9 @@ namespace Nop.Web.Controllers
             this._shippingService = shippingService;
             this._paymentService = paymentService;
             this._pluginFinder = pluginFinder;
-            this._orderTotalCalculationService = orderTotalCalculationService;
             this._logger = logger;
             this._orderService = orderService;
             this._webHelper = webHelper;
-            this._httpContextAccessor = httpContextAccessor;
             this._addressAttributeParser = addressAttributeParser;
             this._addressAttributeService = addressAttributeService;
 
@@ -782,7 +774,7 @@ namespace Nop.Web.Controllers
                 var paymentInfo = new ProcessPaymentRequest();
 
                 //session save
-                _httpContextAccessor.HttpContext?.Session?.Set("OrderPaymentInfo", paymentInfo);
+                this.HttpContext.Session.Set("OrderPaymentInfo", paymentInfo);
 
                 return RedirectToRoute("CheckoutConfirm");
             }
@@ -833,7 +825,7 @@ namespace Nop.Web.Controllers
                 var paymentInfo = paymentMethod.GetPaymentInfo(form);
 
                 //session save
-                _httpContextAccessor.HttpContext?.Session?.Set("OrderPaymentInfo", paymentInfo);
+                this.HttpContext.Session.Set("OrderPaymentInfo", paymentInfo);
                 return RedirectToRoute("CheckoutConfirm");
             }
 
@@ -886,7 +878,7 @@ namespace Nop.Web.Controllers
             var model = _checkoutModelFactory.PrepareConfirmOrderModel(cart);
             try
             {
-                var processPaymentRequest = _httpContextAccessor.HttpContext?.Session?.Get<ProcessPaymentRequest>("OrderPaymentInfo");
+                var processPaymentRequest = this.HttpContext.Session.Get<ProcessPaymentRequest>("OrderPaymentInfo");
                 if (processPaymentRequest == null)
                 {
                     //Check whether payment workflow is required
@@ -909,7 +901,7 @@ namespace Nop.Web.Controllers
                 var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
                 if (placeOrderResult.Success)
                 {
-                    _httpContextAccessor.HttpContext?.Session?.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
+                    this.HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {
                         Order = placeOrderResult.PlacedOrder
@@ -1047,7 +1039,7 @@ namespace Nop.Web.Controllers
                 var paymentInfo = new ProcessPaymentRequest();
 
                 //session save
-                _httpContextAccessor.HttpContext?.Session?.Set("OrderPaymentInfo", paymentInfo);
+                this.HttpContext.Session.Set("OrderPaymentInfo", paymentInfo);
 
                 var confirmOrderModel = _checkoutModelFactory.PrepareConfirmOrderModel(cart);
                 return Json(new
@@ -1553,7 +1545,7 @@ namespace Nop.Web.Controllers
                     var paymentInfo = paymentMethod.GetPaymentInfo(form);
 
                     //session save
-                    _httpContextAccessor.HttpContext?.Session?.Set("OrderPaymentInfo", paymentInfo);
+                    this.HttpContext.Session.Set("OrderPaymentInfo", paymentInfo);
 
                     var confirmOrderModel = _checkoutModelFactory.PrepareConfirmOrderModel(cart);
                     return Json(new
@@ -1608,7 +1600,7 @@ namespace Nop.Web.Controllers
                     throw new Exception(_localizationService.GetResource("Checkout.MinOrderPlacementInterval"));
 
                 //place order
-                var processPaymentRequest = _httpContextAccessor.HttpContext?.Session?.Get<ProcessPaymentRequest>("OrderPaymentInfo");
+                var processPaymentRequest = this.HttpContext.Session.Get<ProcessPaymentRequest>("OrderPaymentInfo");
                 if (processPaymentRequest == null)
                 {
                     //Check whether payment workflow is required
@@ -1628,7 +1620,7 @@ namespace Nop.Web.Controllers
                 var placeOrderResult = _orderProcessingService.PlaceOrder(processPaymentRequest);
                 if (placeOrderResult.Success)
                 {
-                    _httpContextAccessor.HttpContext?.Session?.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
+                    this.HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {
                         Order = placeOrderResult.PlacedOrder

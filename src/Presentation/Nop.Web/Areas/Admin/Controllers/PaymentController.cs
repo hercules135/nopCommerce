@@ -4,8 +4,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using Nop.Admin.Extensions;
-using Nop.Admin.Models.Payments;
+using Nop.Web.Areas.Admin.Extensions;
+using Nop.Web.Areas.Admin.Models.Payments;
 using Nop.Core;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Plugins;
@@ -17,7 +17,7 @@ using Nop.Services.Security;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
 
-namespace Nop.Admin.Controllers
+namespace Nop.Web.Areas.Admin.Controllers
 {
     public partial class PaymentController : BaseAdminController
     {
@@ -80,6 +80,7 @@ namespace Nop.Admin.Controllers
                 var tmp1 = paymentMethod.ToModel();
                 tmp1.IsActive = paymentMethod.IsPaymentMethodActive(_paymentSettings);
                 tmp1.LogoUrl = paymentMethod.PluginDescriptor.GetLogoUrl(_webHelper);
+                tmp1.ConfigurationUrl = paymentMethod.GetConfigurationPageUrl();
                 paymentMethodsModel.Add(tmp1);
             }
             paymentMethodsModel = paymentMethodsModel.ToList();
@@ -125,21 +126,6 @@ namespace Nop.Admin.Controllers
             _pluginFinder.ReloadPlugins();
 
             return new NullJsonResult();
-        }
-
-        public virtual IActionResult ConfigureMethod(string systemName)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
-                return AccessDeniedView();
-
-            var pm = _paymentService.LoadPaymentMethodBySystemName(systemName);
-            if (pm == null)
-                //No payment method found with the specified id
-                return RedirectToAction("Methods");
-
-            var url = pm.GetConfigurationPageUrl();
-            //TODO implement logic when configuration page is not required
-            return Redirect(url);
         }
 
         public virtual IActionResult MethodRestrictions()

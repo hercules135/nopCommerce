@@ -125,7 +125,7 @@ namespace Nop.Core
             catch { return string.Empty; }
 
             //some of the validation
-            if (result.Equals("::1", StringComparison.InvariantCultureIgnoreCase))
+            if (result != null && result.Equals("::1", StringComparison.InvariantCultureIgnoreCase))
                 result = "127.0.0.1";
 
             //remove port
@@ -196,7 +196,6 @@ namespace Nop.Core
             var result = string.Empty;
 
             //try to get host from the request HOST header
-            //TODO test (it's better to yuse server variables)
             var hostHeader = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Host];
             if (!StringValues.IsNullOrEmpty(hostHeader))
                 result = "http://" + hostHeader.FirstOrDefault();

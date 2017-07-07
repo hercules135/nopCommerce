@@ -52,8 +52,9 @@ namespace Nop.Core.Infrastructure
             var startupTasks = typeFinder.FindClassesOfType<IStartupTask>();
 
             //create and sort instances of startup tasks
+            //we startup this interface even for not installed plugins. 
+            //otherwise, DbContext initializers won't run and a plugin installation won't work
             var instances = startupTasks
-                .Where(startupTask => PluginManager.FindPlugin(startupTask).Return(plugin => plugin.Installed, true)) //ignore not installed plugins
                 .Select(startupTask => (IStartupTask)Activator.CreateInstance(startupTask))
                 .OrderBy(startupTask => startupTask.Order);
 
@@ -111,8 +112,8 @@ namespace Nop.Core.Infrastructure
 
             //create and sort instances of mapper configurations
             var instances = mapperConfigurations
-                    .Where(mapperConfiguration => PluginManager.FindPlugin(mapperConfiguration)
-                        .Return(plugin => plugin.Installed, true)) //ignore not installed plugins
+                .Where(mapperConfiguration => PluginManager.FindPlugin(mapperConfiguration)
+                    .Return(plugin => plugin.Installed, true)) //ignore not installed plugins
                 .Select(mapperConfiguration => (IMapperProfile)Activator.CreateInstance(mapperConfiguration))
                 .OrderBy(mapperConfiguration => mapperConfiguration.Order);
 
@@ -151,8 +152,6 @@ namespace Nop.Core.Infrastructure
             //initialize plugins
             var mvcCoreBuilder = services.AddMvcCore();
             PluginManager.Initialize(mvcCoreBuilder.PartManager);
-            //resolve assemblies here. otherwise, plugins can thrown exceptions when rendering views
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -201,6 +200,12 @@ namespace Nop.Core.Infrastructure
             if (!nopConfig.IgnoreStartupTasks)
                 RunStartupTasks(typeFinder);
 
+            //resolve assemblies here. otherwise, plugins can throw an exception when rendering views
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
+            //set App_Data path as base data directory (required to create and save SQL Server Compact database file in App_Data folder)
+            AppDomain.CurrentDomain.SetData("DataDirectory", CommonHelper.MapPath("~/App_Data/"));
+
             return _serviceProvider;
         }
 
@@ -231,7 +236,7 @@ namespace Nop.Core.Infrastructure
         /// <typeparam name="T">Type of resolved service</typeparam>
         /// <returns>Resolved service</returns>
         public T Resolve<T>() where T : class
-		{
+        {
             return (T)GetServiceProvider().GetRequiredService(typeof(T));
         }
 

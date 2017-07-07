@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -28,11 +26,9 @@ using Nop.Services.Logging;
 using Nop.Services.Media;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
-using Nop.Services.Stores;
 using Nop.Services.Tax;
 using Nop.Web.Extensions;
 using Nop.Web.Factories;
-using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Framework.Security;
@@ -68,12 +64,11 @@ namespace Nop.Web.Controllers
         private readonly IPictureService _pictureService;
         private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
         private readonly IShoppingCartService _shoppingCartService;
-        private readonly IOpenAuthenticationService _openAuthenticationService;
+        private readonly IExternalAuthenticationService _externalAuthenticationService;
         private readonly IWebHelper _webHelper;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly IAddressAttributeParser _addressAttributeParser;
         private readonly IAddressAttributeService _addressAttributeService;
-        private readonly IStoreService _storeService;
         private readonly IEventPublisher _eventPublisher;
 
         private readonly MediaSettings _mediaSettings;
@@ -109,12 +104,11 @@ namespace Nop.Web.Controllers
             IPictureService pictureService,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
             IShoppingCartService shoppingCartService,
-            IOpenAuthenticationService openAuthenticationService,
+            IExternalAuthenticationService externalAuthenticationService,
             IWebHelper webHelper,
             ICustomerActivityService customerActivityService,
             IAddressAttributeParser addressAttributeParser,
             IAddressAttributeService addressAttributeService,
-            IStoreService storeService,
             IEventPublisher eventPublisher,
             MediaSettings mediaSettings,
             IWorkflowMessageService workflowMessageService,
@@ -145,12 +139,11 @@ namespace Nop.Web.Controllers
             this._pictureService = pictureService;
             this._newsLetterSubscriptionService = newsLetterSubscriptionService;
             this._shoppingCartService = shoppingCartService;
-            this._openAuthenticationService = openAuthenticationService;
+            this._externalAuthenticationService = externalAuthenticationService;
             this._webHelper = webHelper;
             this._customerActivityService = customerActivityService;
             this._addressAttributeParser = addressAttributeParser;
             this._addressAttributeService = addressAttributeService;
-            this._storeService = storeService;
             this._eventPublisher = eventPublisher;
             this._mediaSettings = mediaSettings;
             this._workflowMessageService = workflowMessageService;
@@ -162,19 +155,15 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Utilities
-#if NET451
+
         protected virtual void TryAssociateAccountWithExternalAccount(Customer customer)
         {
             var parameters = ExternalAuthorizerHelper.RetrieveParametersFromRoundTrip(true);
-            if (parameters == null)
-                return;
 
-            if (_openAuthenticationService.AccountExists(parameters))
-                return;
-
-            _openAuthenticationService.AssociateExternalAccountWithUser(customer, parameters);
+            if (parameters != null && _externalAuthenticationService.GetUserByExternalAuthenticationParameters(parameters) == null)
+                _externalAuthenticationService.AssociateExternalAccountWithUser(customer, parameters);
         }
-#endif
+
         protected virtual string ParseCustomCustomerAttributes(IFormCollection form)
         {
             if (form == null)
@@ -349,10 +338,8 @@ namespace Nop.Web.Controllers
         [CheckAccessPublicStore(true)]
         public virtual IActionResult Logout()
         {
-#if NET451
             //external authentication
             ExternalAuthorizerHelper.RemoveParameters();
-#endif
 
             if (_workContext.OriginalCustomerIfImpersonated != null)
             {
@@ -710,10 +697,8 @@ namespace Nop.Web.Controllers
                     if (isApproved)
                         _authenticationService.SignIn(customer, true);
 
-#if NET451
                     //associated with external account (if possible)
                     TryAssociateAccountWithExternalAccount(customer);
-#endif
 
                     //insert default address (if possible)
                     var defaultAddress = new Address
@@ -1059,17 +1044,15 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
-#if NET451
         [HttpPost]
         [PublicAntiForgery]
         public virtual IActionResult RemoveExternalAssociation(int id)
         {
             if (!_workContext.CurrentCustomer.IsRegistered())
-                return new HttpUnauthorizedResult();
+                return new UnauthorizedResult();
 
             //ensure it's our record
-            var ear = _openAuthenticationService.GetExternalIdentifiersFor(_workContext.CurrentCustomer)
-                .FirstOrDefault(x => x.Id == id);
+            var ear = _workContext.CurrentCustomer.ExternalAuthenticationRecords.FirstOrDefault(x => x.Id == id);
 
             if (ear == null)
             {
@@ -1079,7 +1062,7 @@ namespace Nop.Web.Controllers
                 });
             }
 
-            _openAuthenticationService.DeleteExternalAuthenticationRecord(ear);
+            _externalAuthenticationService.DeleteExternalAuthenticationRecord(ear);
 
             return Json(new
             {
@@ -1087,7 +1070,6 @@ namespace Nop.Web.Controllers
             });
         }
         
-#endif
         [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
