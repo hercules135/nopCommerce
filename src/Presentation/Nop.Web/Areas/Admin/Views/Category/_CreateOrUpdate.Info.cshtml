@@ -2,12 +2,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#@Html.FieldIdFor(model => model.AllowCustomersToSelectPageSize)").click(togglePageSize);
+        $("#@Html.IdFor(model => model.AllowCustomersToSelectPageSize)").click(togglePageSize);
         togglePageSize();
     });
 
     function togglePageSize() {
-        if ($('#@Html.FieldIdFor(model => model.AllowCustomersToSelectPageSize)').is(':checked')) {
+        if ($('#@Html.IdFor(model => model.AllowCustomersToSelectPageSize)').is(':checked')) {
             $('#pnlPageSize').hide();
             $('#pnlPageSizeOptions').show();
         } else {
@@ -26,8 +26,8 @@
                         <nop-label for="@Model.Locales[item].Name" />
                     </div>
                     <div class="col-md-9">
-                        @Html.NopEditorFor(model => model.Locales[item].Name)
-                        @Html.ValidationMessageFor(model => model.Locales[item].Name)
+                        <nop-editor asp-for="@Model.Locales[item].Name" />
+                        <span asp-validation-for="@Model.Locales[item].Name"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -35,21 +35,21 @@
                         <nop-label for="@Model.Locales[item].Description" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.Locales[item].Description, "RichEditor")
-                        @Html.ValidationMessageFor(model => model.Locales[item].Description)
+                        <nop-editor asp-for="@Model.Locales[item].Description" asp-template="RichEditor" />
+                        <span asp-validation-for="@Model.Locales[item].Description"></span>
                     </div>
                 </div>
                 <input type="hidden" asp-for="@Model.Locales[item].LanguageId" />
             </div>
-            ,
+    ,
             @<div>
                 <div class="form-group">
                     <div class="col-md-3">
                         <nop-label for="Name" />
                     </div>
                     <div class="col-md-9">
-                        @Html.NopEditorFor(model => model.Name, required: true)
-                        @Html.ValidationMessageFor(model => model.Name)
+                        <nop-editor asp-for="Name" asp-required="true" />
+                        <span asp-validation-for="Name"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -57,20 +57,20 @@
                         <nop-label for="Description" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(x => x.Description, "RichEditor")
-                        @Html.ValidationMessageFor(model => model.Description)
+                        <nop-editor asp-for="Description" asp-template="RichEditor" />
+                        <span asp-validation-for="Description"></span>
                     </div>
                 </div>
             </div>
-                ))
+          ))
 
             <div class="form-group" @(Model.AvailableCategoryTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                 <div class="col-md-3">
                     <nop-label for="CategoryTemplateId" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopDropDownListFor(model => model.CategoryTemplateId, Model.AvailableCategoryTemplates)
-                    @Html.ValidationMessageFor(model => model.CategoryTemplateId)
+                    <nop-select asp-for="CategoryTemplateId" asp-items="Model.AvailableCategoryTemplates"></nop-select>
+                    <span asp-validation-for="CategoryTemplateId"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -78,8 +78,8 @@
                     <nop-label for="PictureId" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(model => model.PictureId)
-                    @Html.ValidationMessageFor(model => model.PictureId)
+                    <nop-editor asp-for="PictureId" />
+                    <span asp-validation-for="PictureId"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -87,8 +87,8 @@
                     <nop-label for="ParentCategoryId" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopDropDownListFor(model => model.ParentCategoryId, Model.AvailableCategories)
-                    @Html.ValidationMessageFor(model => model.ParentCategoryId)
+                    <nop-select asp-for="ParentCategoryId" asp-items="Model.AvailableCategories"></nop-select>
+                    <span asp-validation-for="ParentCategoryId"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
@@ -96,8 +96,8 @@
                     <nop-label for="PriceRanges" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.PriceRanges)
-                    @Html.ValidationMessageFor(model => model.PriceRanges)
+                    <nop-editor asp-for="PriceRanges" />
+                    <span asp-validation-for="PriceRanges"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
@@ -105,8 +105,8 @@
                     <nop-label for="ShowOnHomePage" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.ShowOnHomePage)
-                    @Html.ValidationMessageFor(model => model.ShowOnHomePage)
+                    <nop-editor asp-for="ShowOnHomePage" />
+                    <span asp-validation-for="ShowOnHomePage"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
@@ -114,8 +114,8 @@
                     <nop-label for="IncludeInTopMenu" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.IncludeInTopMenu)
-                    @Html.ValidationMessageFor(model => model.IncludeInTopMenu)
+                    <nop-editor asp-for="IncludeInTopMenu" />
+                    <span asp-validation-for="IncludeInTopMenu"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
@@ -123,8 +123,8 @@
                     <nop-label for="AllowCustomersToSelectPageSize" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.AllowCustomersToSelectPageSize)
-                    @Html.ValidationMessageFor(model => model.AllowCustomersToSelectPageSize)
+                    <nop-editor asp-for="AllowCustomersToSelectPageSize" />
+                    <span asp-validation-for="AllowCustomersToSelectPageSize"></span>
                 </div>
             </div>
             <div id="pnlPageSize" class="form-group advanced-setting">
@@ -132,8 +132,8 @@
                     <nop-label for="PageSize" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.PageSize)
-                    @Html.ValidationMessageFor(model => model.PageSize)
+                    <nop-editor asp-for="PageSize" />
+                    <span asp-validation-for="PageSize"></span>
                 </div>
             </div>
             <div id="pnlPageSizeOptions" class="form-group advanced-setting">
@@ -141,8 +141,8 @@
                     <nop-label for="PageSizeOptions" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.PageSizeOptions)
-                    @Html.ValidationMessageFor(model => model.PageSizeOptions)
+                    <nop-editor asp-for="PageSizeOptions" />
+                    <span asp-validation-for="PageSizeOptions"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
@@ -150,26 +150,27 @@
                     <nop-label for="SelectedDiscountIds" />
                 </div>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.SelectedDiscountIds, new { SelectList = Model.AvailableDiscounts })
+                    <nop-editor asp-for="SelectedDiscountIds" asp-items="Model.AvailableDiscounts" />
                     <script>
-                        $(document).ready(function() {
-                            var discountsIdsInput = $('#@Html.FieldIdFor(model => model.SelectedDiscountIds)').data("kendoMultiSelect");
-                            discountsIdsInput.setOptions({
-                                autoClose: false
-                            });
+                $(document).ready(function() {
+                    var discountsIdsInput = $('#@Html.IdFor(model => model.SelectedDiscountIds)')
+                        .data("kendoMultiSelect");
+                    discountsIdsInput.setOptions({
+                        autoClose: false
+                    });
 
-                            @if (Model.AvailableDiscounts.Count == 0)
-                            {
-                                <text>
+                    @if (Model.AvailableDiscounts.Count == 0)
+                    {
+                        <text>
                             discountsIdsInput.setOptions({
                                 enable: false,
                                 placeholder: '@T("Admin.Catalog.Categories.Fields.Discounts.NoDiscounts")'
                             });
                             discountsIdsInput._placeholder();
                             discountsIdsInput._enable();
-                            </text>
-                            }
-                        });
+                        </text>
+                    }
+                });
                     </script>
                 </div>
             </div>
@@ -180,17 +181,18 @@
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-md-4">
-                            @Html.EditorFor(model => model.SelectedCustomerRoleIds, new { SelectList = Model.AvailableCustomerRoles })
+                            <nop-editor asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" />
                             <script>
-                                $(document).ready(function() {
-                                    var rolesIdsInput = $('#@Html.FieldIdFor(model => model.SelectedCustomerRoleIds)').data("kendoMultiSelect");
-                                    rolesIdsInput.setOptions({
-                                        autoClose: false
-                                    });
+                        $(document).ready(function() {
+                            var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)')
+                                .data("kendoMultiSelect");
+                            rolesIdsInput.setOptions({
+                                autoClose: false
+                            });
 
-                                    @if (Model.AvailableCustomerRoles.Count == 0)
-                                    {
-                                        <text>
+                            @if (Model.AvailableCustomerRoles.Count == 0)
+                            {
+                                <text>
                                     rolesIdsInput.setOptions({
                                         enable: false,
                                         placeholder: 'No customer roles available'
@@ -198,8 +200,8 @@
                                     rolesIdsInput._placeholder();
                                     rolesIdsInput._enable();
                                 </text>
-                                    }
-                                });
+                            }
+                        });
                             </script>
                         </div>
                         <div class="col-md-8">
@@ -215,26 +217,27 @@
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-md-4">
-                            @Html.EditorFor(model => model.SelectedStoreIds, new { SelectList = Model.AvailableStores })
+                            <nop-editor asp-for="SelectedStoreIds" asp-items="Model.AvailableStores" />
                             <script>
-                            $(document).ready(function() {
-                                var storesIdsInput = $('#@Html.FieldIdFor(model => model.SelectedStoreIds)').data("kendoMultiSelect");
-                                storesIdsInput.setOptions({
-                                    autoClose: false
-                                });
-
-                                @if (Model.AvailableStores.Count == 0)
-                                {
-                                    <text>
-                                storesIdsInput.setOptions({
-                                    enable: false,
-                                    placeholder: 'No stores available'
-                                });
-                                storesIdsInput._placeholder();
-                                storesIdsInput._enable();
-                                </text>
-                                }
+                        $(document).ready(function() {
+                            var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)')
+                                .data("kendoMultiSelect");
+                            storesIdsInput.setOptions({
+                                autoClose: false
                             });
+
+                            @if (Model.AvailableStores.Count == 0)
+                            {
+                                <text>
+                                    storesIdsInput.setOptions({
+                                        enable: false,
+                                        placeholder: 'No stores available'
+                                    });
+                                    storesIdsInput._placeholder();
+                                    storesIdsInput._enable();
+                                </text>
+                            }
+                        });
                             </script>
                         </div>
                         <div class="col-md-8">
@@ -248,8 +251,8 @@
                     <nop-label for="Published" />
                 </div>
                 <div class="col-md-9">
-                    @Html.NopEditorFor(x => x.Published)
-                    @Html.ValidationMessageFor(model => model.Published)
+                    <nop-editor asp-for="Published" />
+                    <span asp-validation-for="Published"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -257,8 +260,8 @@
                     <nop-label for="DisplayOrder" />
                 </div>
                 <div class="col-md-9">
-                    <input asp-for="DisplayOrder" />
-                    @Html.ValidationMessageFor(model => model.DisplayOrder)
+                    <nop-editor asp-for="DisplayOrder" />
+                    <span asp-validation-for="DisplayOrder"></span>
                 </div>
             </div>
         </div>
