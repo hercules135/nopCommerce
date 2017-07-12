@@ -1,45 +1,72 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Html;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Nop.Web.Framework.TagHelpers
+namespace Nop.Web.Framework.TagHelpers.Admin
 {
-    [HtmlTargetElement("nop-editor", Attributes = ForAttributeName)]
-    public class NopInputTagHelper : InputTagHelper
+    [HtmlTargetElement("nop-editor", Attributes = ForAttributeName, TagStructure = TagStructure.WithoutEndTag)]
+    public class NopEditorTagHelper : TagHelper
     {
         private const string ForAttributeName = "asp-for";
         private const string DisabledAttributeName = "asp-disabled";
         private const string RequiredAttributeName = "asp-required";
         private const string TemplateAttributeName = "asp-template";
-        private const string ItemsAttributeName = "asp-items";
 
         private readonly IHtmlHelper _htmlHelper;
 
+        /// <summary>
+        /// An expression to be evaluated against the current model
+        /// </summary>
+        [HtmlAttributeName(ForAttributeName)]
+        public ModelExpression For { get; set; }
+
+        /// <summary>
+        /// Indicates whether the field is disabled
+        /// </summary>
         [HtmlAttributeName(DisabledAttributeName)]
         public string IsDisabled { set; get; }
 
+        /// <summary>
+        /// Indicates whether the field is required
+        /// </summary>
         [HtmlAttributeName(RequiredAttributeName)]
         public string IsRequired { set; get; }
 
+        /// <summary>
+        /// Editor template for the field
+        /// </summary>
         [HtmlAttributeName(TemplateAttributeName)]
         public string Template { set; get; }
 
-        [HtmlAttributeName(ItemsAttributeName)]
-        public IList<SelectListItem> Items { set; get; }
+        /// <summary>
+        /// ViewContext
+        /// </summary>
+        [HtmlAttributeNotBound]
+        [ViewContext]
+        public ViewContext ViewContext { get; set; }
 
-        public NopInputTagHelper(IHtmlGenerator generator, IHtmlHelper htmlHelper) : base(generator)
+        public NopEditorTagHelper(IHtmlHelper htmlHelper)
         {
             _htmlHelper = htmlHelper;
         }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (output == null)
+            {
+                throw new ArgumentNullException(nameof(output));
+            }
+
+            //clear the output
             output.SuppressOutput();
 
             //disabled attribute
@@ -50,12 +77,6 @@ namespace Nop.Web.Framework.TagHelpers
                 output.Attributes.Add(d);
             }
 
-            //merge classes
-            //var classValue = output.Attributes.ContainsName("class")
-            //    ? $"{output.Attributes["class"].Value} form-control"
-            //    : "form-control";
-            //output.Attributes.SetAttribute("class", classValue);
-
             //required asterisk
             bool.TryParse(IsRequired, out bool required);
             if (required)
@@ -64,18 +85,20 @@ namespace Nop.Web.Framework.TagHelpers
                 output.PostElement.SetHtmlContent("<div class=\"input-group-btn\"><span class=\"required\">*</span></div></div>");
             }
 
-            //generate editor
+            //contextualize IHtmlHelper
             var viewContextAware
                 = _htmlHelper as IViewContextAware;
             viewContextAware?.Contextualize(ViewContext);
 
-            IHtmlContent s = _htmlHelper.Editor(For.Name, Template, Items != null && Items.Any() ? new { SelectList = Items } : null);
+            //generate editor
+            var s = _htmlHelper.Editor(For.Name, Template);
             string htmlOutput;
             using (var writer = new StringWriter())
             {
                 s.WriteTo(writer, HtmlEncoder.Default);
                 htmlOutput = writer.ToString();
             }
+
             output.Content.SetHtmlContent(htmlOutput);
         }
     }

@@ -1,8 +1,8 @@
 ﻿@model CategoryModel
 @inject IEventPublisher eventPublisher
 
-@Html.ValidationSummary(false)
-@Html.HiddenFor(model => model.Id)
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden"/>
 
 <script>
     $(document).ready(function() {

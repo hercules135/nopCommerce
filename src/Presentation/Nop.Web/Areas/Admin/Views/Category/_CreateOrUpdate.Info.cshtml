@@ -19,11 +19,11 @@
 <div class="panel-group">
     <div class="panel panel-default">
         <div class="panel-body">
-            @(Html.LocalizedEditor<CategoryModel, CategoryLocalizedModel>("category-info-localized",
+        @(Html.LocalizedEditor<CategoryModel, CategoryLocalizedModel>("category-info-localized",
             @<div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label for="@Model.Locales[item].Name" />
+                        <nop-label asp-for="@Model.Locales[item].Name" />
                     </div>
                     <div class="col-md-9">
                         <nop-editor asp-for="@Model.Locales[item].Name" />
@@ -32,7 +32,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label for="@Model.Locales[item].Description" />
+                        <nop-label asp-for="@Model.Locales[item].Description" />
                     </div>
                     <div class="col-md-9">
                         <nop-editor asp-for="@Model.Locales[item].Description" asp-template="RichEditor" />
@@ -45,7 +45,7 @@
             @<div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label for="Name" />
+                        <nop-label asp-for="Name" />
                     </div>
                     <div class="col-md-9">
                         <nop-editor asp-for="Name" asp-required="true" />
@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label for="Description" />
+                        <nop-label asp-for="Description" />
                     </div>
                     <div class="col-md-9">
                         <nop-editor asp-for="Description" asp-template="RichEditor" />
@@ -66,16 +66,16 @@
 
             <div class="form-group" @(Model.AvailableCategoryTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
                 <div class="col-md-3">
-                    <nop-label for="CategoryTemplateId" />
+                    <nop-label asp-for="CategoryTemplateId" />
                 </div>
                 <div class="col-md-9">
-                    <nop-select asp-for="CategoryTemplateId" asp-items="Model.AvailableCategoryTemplates"></nop-select>
+                    <nop-select asp-for="CategoryTemplateId" asp-items="Model.AvailableCategoryTemplates" />
                     <span asp-validation-for="CategoryTemplateId"></span>
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-md-3">
-                    <nop-label for="PictureId" />
+                    <nop-label asp-for="PictureId" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="PictureId" />
@@ -84,16 +84,16 @@
             </div>
             <div class="form-group">
                 <div class="col-md-3">
-                    <nop-label for="ParentCategoryId" />
+                    <nop-label asp-for="ParentCategoryId" />
                 </div>
                 <div class="col-md-9">
-                    <nop-select asp-for="ParentCategoryId" asp-items="Model.AvailableCategories"></nop-select>
+                    <nop-select asp-for="ParentCategoryId" asp-items="Model.AvailableCategories" />
                     <span asp-validation-for="ParentCategoryId"></span>
                 </div>
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="PriceRanges" />
+                    <nop-label asp-for="PriceRanges" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="PriceRanges" />
@@ -102,7 +102,7 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="ShowOnHomePage" />
+                    <nop-label asp-for="ShowOnHomePage" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="ShowOnHomePage" />
@@ -111,7 +111,7 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="IncludeInTopMenu" />
+                    <nop-label asp-for="IncludeInTopMenu" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="IncludeInTopMenu" />
@@ -120,7 +120,7 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="AllowCustomersToSelectPageSize" />
+                    <nop-label asp-for="AllowCustomersToSelectPageSize" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="AllowCustomersToSelectPageSize" />
@@ -129,7 +129,7 @@
             </div>
             <div id="pnlPageSize" class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="PageSize" />
+                    <nop-label asp-for="PageSize" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="PageSize" />
@@ -138,7 +138,7 @@
             </div>
             <div id="pnlPageSizeOptions" class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="PageSizeOptions" />
+                    <nop-label asp-for="PageSizeOptions" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="PageSizeOptions" />
@@ -147,41 +147,41 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="SelectedDiscountIds" />
+                    <nop-label asp-for="SelectedDiscountIds" />
                 </div>
                 <div class="col-md-9">
-                    <nop-editor asp-for="SelectedDiscountIds" asp-items="Model.AvailableDiscounts" />
+                    <nop-select asp-for="SelectedDiscountIds" asp-items="Model.AvailableDiscounts" asp-multiple="true"/>
                     <script>
-                $(document).ready(function() {
-                    var discountsIdsInput = $('#@Html.IdFor(model => model.SelectedDiscountIds)')
-                        .data("kendoMultiSelect");
-                    discountsIdsInput.setOptions({
-                        autoClose: false
-                    });
-
-                    @if (Model.AvailableDiscounts.Count == 0)
-                    {
-                        <text>
+                        $(document).ready(function() {
+                            var discountsIdsInput = $('#@Html.IdFor(model => model.SelectedDiscountIds)')
+                                .data("kendoMultiSelect");
                             discountsIdsInput.setOptions({
-                                enable: false,
-                                placeholder: '@T("Admin.Catalog.Categories.Fields.Discounts.NoDiscounts")'
+                                autoClose: false
                             });
-                            discountsIdsInput._placeholder();
-                            discountsIdsInput._enable();
-                        </text>
-                    }
-                });
+
+                            @if (Model.AvailableDiscounts.Count == 0)
+                            {
+                                <text>
+                                    discountsIdsInput.setOptions({
+                                        enable: false,
+                                        placeholder: '@T("Admin.Catalog.Categories.Fields.Discounts.NoDiscounts")'
+                                    });
+                                    discountsIdsInput._placeholder();
+                                    discountsIdsInput._enable();
+                                </text>
+                            }
+                        });
                     </script>
                 </div>
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="SelectedCustomerRoleIds" />
+                    <nop-label asp-for="SelectedCustomerRoleIds" />
                 </div>
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-md-4">
-                            <nop-editor asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" />
+                            <nop-select asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" asp-multiple="true" />
                             <script>
                         $(document).ready(function() {
                             var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)')
@@ -212,32 +212,32 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="SelectedStoreIds" />
+                    <nop-label asp-for="SelectedStoreIds" />
                 </div>
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-md-4">
-                            <nop-editor asp-for="SelectedStoreIds" asp-items="Model.AvailableStores" />
+                            <nop-select asp-for="SelectedStoreIds" asp-items="Model.AvailableStores" asp-multiple="true"/>
                             <script>
-                        $(document).ready(function() {
-                            var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)')
-                                .data("kendoMultiSelect");
-                            storesIdsInput.setOptions({
-                                autoClose: false
-                            });
-
-                            @if (Model.AvailableStores.Count == 0)
-                            {
-                                <text>
+                                $(document).ready(function() {
+                                    var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)')
+                                        .data("kendoMultiSelect");
                                     storesIdsInput.setOptions({
-                                        enable: false,
-                                        placeholder: 'No stores available'
+                                        autoClose: false
                                     });
-                                    storesIdsInput._placeholder();
-                                    storesIdsInput._enable();
-                                </text>
-                            }
-                        });
+
+                                    @if (Model.AvailableStores.Count == 0)
+                                    {
+                                        <text>
+                                            storesIdsInput.setOptions({
+                                                enable: false,
+                                                placeholder: 'No stores available'
+                                            });
+                                            storesIdsInput._placeholder();
+                                            storesIdsInput._enable();
+                                        </text>
+                                    }
+                                });
                             </script>
                         </div>
                         <div class="col-md-8">
@@ -248,7 +248,7 @@
             </div>
             <div class="form-group advanced-setting">
                 <div class="col-md-3">
-                    <nop-label for="Published" />
+                    <nop-label asp-for="Published" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="Published" />
@@ -257,7 +257,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-3">
-                    <nop-label for="DisplayOrder" />
+                    <nop-label asp-for="DisplayOrder" />
                 </div>
                 <div class="col-md-9">
                     <nop-editor asp-for="DisplayOrder" />
