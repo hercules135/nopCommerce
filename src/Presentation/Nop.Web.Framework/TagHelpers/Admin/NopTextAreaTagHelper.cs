@@ -10,11 +10,12 @@ namespace Nop.Web.Framework.TagHelpers.Admin
     {
         private const string ForAttributeName = "asp-for";
         private const string RequiredAttributeName = "asp-required";
+        private const string DisabledAttributeName = "asp-disabled";
 
         /// <summary>
         /// Indicates whether the input is disabled
         /// </summary>
-        [HtmlAttributeName("asp-disabled")]
+        [HtmlAttributeName(DisabledAttributeName)]
         public string IsDisabled { set; get; }
 
         /// <summary>
